@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css" />
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css" />
+
+  <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <style>
+    #map_63dce5f1cec547c47feb65d0694faa86 {
+      position: relative;
+      width: 100.0%;
+      height: 100.0%;
+      left: 0.0%;
+      top: 0.0%;
+    }
+
+    .leaflet-container {
+      font-size: 1rem;
+    }
+  </style>
+
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <style>
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+    }
+  </style>
+
+  <script>
+    L_NO_TOUCH = false;
+    L_DISABLE_3D = false;
+  </script>
+
+
+</head>
+
+<body>
+
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    /* ── Slider Panel ── */
+    #ctrl-panel {
+      position: fixed;
+      bottom: 30px;
+      left: 20px;
+      z-index: 9999;
+      background: rgba(30, 42, 56, 0.92);
+      border: 1px solid rgba(63, 209, 200, 0.35);
+      border-radius: 16px;
+      padding: 18px 20px 14px;
+      font-family: Inter, sans-serif;
+      width: 310px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 6px 40px rgba(0, 0, 0, 0.35);
+      transition: opacity .2s;
+    }
+
+    #ctrl-panel h3 {
+      margin: 0 0 4px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: #3fd1c8;
+      text-transform: uppercase;
+    }
+
+    #ctrl-panel .subtitle {
+      font-size: 10px;
+      color: #9aa8b5;
+      margin-bottom: 14px;
+    }
+
+    /* Slider rows */
+    .slider-row {
+      margin-bottom: 12px;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .slider-label span {
+      font-size: 11px;
+      font-weight: 600;
+      color: #ccc;
+    }
+
+    .slider-label .val-badge {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 1px 7px;
+      border-radius: 6px;
+      min-width: 46px;
+      text-align: right;
+    }
+
+    /* Range input theming */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 5px;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      transition: transform .1s;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Per-component accent colours */
+    #sl-hydro {
+      background: linear-gradient(to right, #1a6f8a, #3fd1c8);
+    }
+
+    #sl-hydro::-webkit-slider-thumb {
+      background: #3fd1c8;
+    }
+
+    #sl-heat {
+      background: linear-gradient(to right, #8a4a1a, #f7412d);
+    }
+
+    #sl-heat::-webkit-slider-thumb {
+      background: #f7412d;
+    }
+
+    #sl-aq {
+      background: linear-gradient(to right, #3a6a1a, #7ed957);
+    }
+
+    #sl-aq::-webkit-slider-thumb {
+      background: #7ed957;
+    }
+
+    /* Sum indicator */
+    #sum-bar {
+      height: 4px;
+      border-radius: 2px;
+      margin: 8px 0 6px;
+      transition: background .3s;
+    }
+
+    #sum-label {
+      font-size: 10px;
+      text-align: right;
+      color: #888;
+      margin-top: 2px;
+      margin-bottom: 10px;
+    }
+
+    #sum-label span {
+      font-weight: 700;
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 7px 6px;
+      border: none;
+      border-radius: 9px;
+      font-family: Inter, sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .6px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: opacity .15s, transform .1s;
+    }
+
+    .btn:hover {
+      opacity: .85;
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    #btn-classic {
+      background: linear-gradient(135deg, #3fd1c8, #1a7a75);
+      color: #000;
+    }
+
+    #btn-equal {
+      background: rgba(255, 255, 255, 0.08);
+      color: #aaa;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Component-solo buttons */
+    .btn-row-solo {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .btn-row-solo .btn {
+      font-size: 8.5px;
+      padding: 5px 4px;
+      letter-spacing: .4px;
+    }
+
+    #btn-hydro-only {
+      background: rgba(63, 209, 200, 0.15);
+      color: #3fd1c8;
+      border: 1px solid rgba(63, 209, 200, 0.35);
+    }
+
+    #btn-heat-only {
+      background: rgba(247, 65, 45, 0.15);
+      color: #f7412d;
+      border: 1px solid rgba(247, 65, 45, 0.35);
+    }
+
+    #btn-aq-only {
+      background: rgba(126, 217, 87, 0.15);
+      color: #7ed957;
+      border: 1px solid rgba(126, 217, 87, 0.35);
+    }
+
+    /* ── Legend Panel ── */
+    #gipi-legend {
+      position: fixed;
+      bottom: 30px;
+      right: 20px;
+      z-index: 9999;
+      background: rgba(30, 42, 56, 0.92);
+      border: 1px solid rgba(63, 209, 200, 0.35);
+      border-radius: 14px;
+      padding: 14px 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+      font-family: Inter, sans-serif;
+      max-height: 520px;
+      overflow-y: auto;
+    }
+
+    #gipi-legend h4 {
+      margin: 0 0 6px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: #3fd1c8;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(63, 209, 200, 0.2);
+      padding-bottom: 6px;
+    }
+
+    #gipi-legend .legend-sub {
+      font-size: 10px;
+      color: #9aa8b5;
+      margin-bottom: 8px;
+    }
+
+    .leg-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 0;
+    }
+
+    .leg-rank {
+      font-size: 10px;
+      color: #666;
+      width: 20px;
+    }
+
+    .leg-dot {
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: all .35s;
+    }
+
+    .leg-name {
+      font-size: 11px;
+      color: #ddd;
+      flex: 1;
+    }
+
+    .leg-val {
+      font-size: 11px;
+      font-weight: 700;
+      min-width: 46px;
+      text-align: right;
+      transition: color .35s;
+    }
+
+    /* ── Title Banner ── */
+    #title-banner {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      background: rgba(30, 42, 56, 0.90);
+      border: 1px solid rgba(63, 209, 200, 0.4);
+      border-radius: 12px;
+      padding: 10px 26px;
+      font-family: Inter, sans-serif;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      pointer-events: none;
+    }
+
+    #title-banner h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #3fd1c8;
+    }
+
+    #title-banner p {
+      margin: 3px 0 0;
+      font-size: 11px;
+      color: #b0bcc6;
+    }
+  </style>
+
+  <div id="title-banner">
+    <h1>Green Infrastructure Potential Index</h1>
+    <p>Top 20 Most Populous US Cities &nbsp;|&nbsp; Circle size &amp; colour indicate GIPI magnitude &nbsp;|&nbsp;
+      Adjust weights below</p>
+    <p style="margin:5px 0 0;font-size:9.5px;color:#8a9baa;letter-spacing:0.4px;">Developed by Nate Mestre, supervised by Dr. Omar Wani &nbsp;&bull;&nbsp; Hydrologic Systems Group @ NYU</p>
+  </div>
+
+  <div id="ctrl-panel">
+    <h3>Component Weights</h3>
+    <p class="subtitle">Drag sliders &mdash; weights auto-normalise to sum = 1.00</p>
+
+    <div class="slider-row" id="row-hydro">
+      <div class="slider-label">
+        <span>Hydrological Component</span>
+        <span class="val-badge" id="lbl-hydro" style="color:#3fd1c8;">0.60</span>
+      </div>
+      <input type="range" id="sl-hydro" min="0" max="100" value="60">
+    </div>
+
+    <div class="slider-row" id="row-heat">
+      <div class="slider-label">
+        <span>Heat Component</span>
+        <span class="val-badge" id="lbl-heat" style="color:#f7412d;">0.30</span>
+      </div>
+      <input type="range" id="sl-heat" min="0" max="100" value="30">
+    </div>
+
+    <div class="slider-row" id="row-aq">
+      <div class="slider-label">
+        <span>Air Quality Component</span>
+        <span class="val-badge" id="lbl-aq" style="color:#7ed957;">0.10</span>
+      </div>
+      <input type="range" id="sl-aq" min="0" max="100" value="10">
+    </div>
+
+    <div id="sum-bar"></div>
+    <div id="sum-label">Weight sum: <span id="sum-val">1.00</span></div>
+
+    <div class="btn-row">
+      <button class="btn" id="btn-classic" title="Reset to Classic GIPI: 0.6 / 0.3 / 0.1">Classic GIPI</button>
+      <button class="btn" id="btn-equal" title="Equal weights: 0.33 / 0.33 / 0.33">Equal Weights</button>
+    </div>
+    <div class="btn-row-solo">
+      <button class="btn" id="btn-hydro-only" title="100% Hydrological">Hydro Only</button>
+      <button class="btn" id="btn-heat-only" title="100% Heat Severity">Heat Only</button>
+      <button class="btn" id="btn-aq-only" title="100% Air Quality">AQ Only</button>
+    </div>
+  </div>
+
+  <div id="gipi-legend">
+    <h4>GIPI Rankings</h4>
+    <div class="legend-sub">
+      <span style="color:#3fd1c8;">&#9632;</span> Low &nbsp;
+      <span style="color:#f6c90e;">&#9632;</span> Mid &nbsp;
+      <span style="color:#f7412d;">&#9632;</span> High
+    </div>
+    <div id="legend-rows"></div>
+  </div>
+
+  <script>
+    // ─── Data ────────────────────────────────────────────────────────────────────
+    const CITIES = [
+      {
+        "id": "Houston",
+        "name": "Houston",
+        "lat": 29.7604,
+        "lon": -95.3698,
+        "hydro": 0.427819,
+        "heat": 0.452881,
+        "aq": 0.939097,
+        "gipi_classic": 0.486465
+      },
+      {
+        "id": "Jacksonville",
+        "name": "Jacksonville",
+        "lat": 30.3322,
+        "lon": -81.6557,
+        "hydro": 0.20669,
+        "heat": 0.399350,
+        "aq": 0.335997,
+        "gipi_classic": 0.277419
+      },
+      {
+        "id": "Austin",
+        "name": "Austin",
+        "lat": 30.2672,
+        "lon": -97.7431,
+        "hydro": 0.337667,
+        "heat": 0.410946,
+        "aq": 0.581975,
+        "gipi_classic": 0.384082
+      },
+      {
+        "id": "SanAntonio",
+        "name": "San Antonio",
+        "lat": 29.4241,
+        "lon": -98.4936,
+        "hydro": 0.350029,
+        "heat": 0.448544,
+        "aq": 0.629415,
+        "gipi_classic": 0.407522
+      },
+      {
+        "id": "Dallas",
+        "name": "Dallas",
+        "lat": 32.7767,
+        "lon": -96.797,
+        "hydro": 0.402334,
+        "heat": 0.464912,
+        "aq": 0.904032,
+        "gipi_classic": 0.471277
+      },
+      {
+        "id": "OklahomaCity",
+        "name": "Oklahoma City",
+        "lat": 35.4676,
+        "lon": -97.5164,
+        "hydro": 0.201819,
+        "heat": 0.323257,
+        "aq": 0.597112,
+        "gipi_classic": 0.277780
+      },
+      {
+        "id": "FtWorth",
+        "name": "Fort Worth",
+        "lat": 32.7555,
+        "lon": -97.3308,
+        "hydro": 0.378274,
+        "heat": 0.500655,
+        "aq": 0.841030,
+        "gipi_classic": 0.461264
+      },
+      {
+        "id": "Charlotte",
+        "name": "Charlotte",
+        "lat": 35.2271,
+        "lon": -80.8431,
+        "hydro": 0.325220,
+        "heat": 0.388194,
+        "aq": 0.624730,
+        "gipi_classic": 0.374063
+      },
+      {
+        "id": "Chicago",
+        "name": "Chicago",
+        "lat": 41.8781,
+        "lon": -87.6298,
+        "hydro": 0.478363,
+        "heat": 0.391615,
+        "aq": 0.757895,
+        "gipi_classic": 0.480292
+      },
+      {
+        "id": "Philadelphia",
+        "name": "Philadelphia",
+        "lat": 39.9526,
+        "lon": -75.1652,
+        "hydro": 0.452635,
+        "heat": 0.420383,
+        "aq": 0.724252,
+        "gipi_classic": 0.470121
+      },
+      {
+        "id": "Indianapolis",
+        "name": "Indianapolis",
+        "lat": 39.7684,
+        "lon": -86.1581,
+        "hydro": 0.372579,
+        "heat": 0.323023,
+        "aq": 0.760518,
+        "gipi_classic": 0.396506
+      },
+      {
+        "id": "Columbus",
+        "name": "Columbus",
+        "lat": 39.9612,
+        "lon": -82.9988,
+        "hydro": 0.415051,
+        "heat": 0.331028,
+        "aq": 0.320335,
+        "gipi_classic": 0.380372
+      },
+      {
+        "id": "NYC",
+        "name": "New York City",
+        "lat": 40.7128,
+        "lon": -74.006,
+        "hydro": 0.452366,
+        "heat": 0.595656,
+        "aq": 0.757569,
+        "gipi_classic": 0.525873
+      },
+      {
+        "id": "Denver",
+        "name": "Denver",
+        "lat": 39.7392,
+        "lon": -104.9903,
+        "hydro": 0.259052,
+        "heat": 0.162877,
+        "aq": 0.899131,
+        "gipi_classic": 0.294207
+      },
+      {
+        "id": "Phoenix",
+        "name": "Phoenix",
+        "lat": 33.4484,
+        "lon": -112.074,
+        "hydro": 0.215013,
+        "heat": 0.455387,
+        "aq": 0.850364,
+        "gipi_classic": 0.350660
+      },
+      {
+        "id": "LosAngeles",
+        "name": "Los Angeles",
+        "lat": 34.0522,
+        "lon": -118.2437,
+        "hydro": 0.252380,
+        "heat": 0.367166,
+        "aq": 0.916868,
+        "gipi_classic": 0.353264
+      },
+      {
+        "id": "SanFrancisco",
+        "name": "San Francisco",
+        "lat": 37.7749,
+        "lon": -122.4194,
+        "hydro": 0.274735,
+        "heat": 0.193154,
+        "aq": 0.616156,
+        "gipi_classic": 0.284403
+      },
+      {
+        "id": "SanDiego",
+        "name": "San Diego",
+        "lat": 32.7157,
+        "lon": -117.1611,
+        "hydro": 0.191872,
+        "heat": 0.324397,
+        "aq": 0.729026,
+        "gipi_classic": 0.285345
+      },
+      {
+        "id": "Seattle",
+        "name": "Seattle",
+        "lat": 47.6062,
+        "lon": -122.3321,
+        "hydro": 0.245339,
+        "heat": 0.316491,
+        "aq": 0.849761,
+        "gipi_classic": 0.327127
+      },
+      {
+        "id": "SanJose",
+        "name": "San Jose",
+        "lat": 37.3382,
+        "lon": -121.8863,
+        "hydro": 0.211231,
+        "heat": 0.248160,
+        "aq": 0.752495,
+        "gipi_classic": 0.276436
+      }
+    ];
+
+    const MIN_R = 14;
+    const MAX_R = 55;
+    const LOW_C = "#3fd1c8";
+    const MID_C = "#f6c90e";
+    const HIGH_C = "#f7412d";
+
+    const BASE_W = { hydro: 0.6, heat: 0.3, aq: 0.1 };
+
+    // ─── Helpers ─────────────────────────────────────────────────────────────────
+    function hexToRgb(h) {
+      let n = h.replace('#', '');
+      return [parseInt(n.slice(0, 2), 16), parseInt(n.slice(2, 4), 16), parseInt(n.slice(4, 6), 16)];
+    }
+    function rgbToHex(r, g, b) {
+      return '#' + [r, g, b].map(x => Math.round(x).toString(16).padStart(2, '0')).join('');
+    }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function gipiColor(norm) {
+      let c1, c2, t;
+      if (norm < 0.5) { c1 = hexToRgb(LOW_C); c2 = hexToRgb(MID_C); t = norm * 2; }
+      else { c1 = hexToRgb(MID_C); c2 = hexToRgb(HIGH_C); t = (norm - 0.5) * 2; }
+      return rgbToHex(lerp(c1[0], c2[0], t), lerp(c1[1], c2[1], t), lerp(c1[2], c2[2], t));
+    }
+
+    function scaleRadius(norm) {
+      return MIN_R + norm * (MAX_R - MIN_R);
+    }
+
+    // ─── Wait for Leaflet map to be ready ────────────────────────────────────────
+    function waitForMap(cb) {
+      const timer = setInterval(() => {
+        const keys = Object.keys(window).filter(k => k.startsWith('map_'));
+        if (keys.length) { clearInterval(timer); cb(window[keys[0]]); }
+      }, 100);
+    }
+
+    waitForMap(function (leafletMap) {
+
+      // ─── Create Leaflet layers for every city ────────────────────────────────
+      const layers = {};
+      const labelMarkers = {};
+
+      CITIES.forEach(city => {
+        // Circle
+        const circle = L.circleMarker([city.lat, city.lon], {
+          radius: 20,
+          color: '#3fd1c8',
+          fillColor: '#3fd1c8',
+          fillOpacity: 0.65,
+          weight: 2,
+          opacity: 0.9,
+        }).addTo(leafletMap);
+
+        // Tooltip
+        circle.bindTooltip('', { sticky: false, className: '' });
+
+        // Popup
+        circle.bindPopup('');
+
+        layers[city.id] = circle;
+
+        // Label
+        const label = L.marker([city.lat + 0.65, city.lon], {
+          icon: L.divIcon({
+            html: `<div style="font-family:Inter,sans-serif;font-size:11px;font-weight:700;
+                           color:#fff;text-shadow:0 0 4px #000,0 0 8px #000;
+                           white-space:nowrap;pointer-events:none;">${city.name}</div>`,
+            iconSize: [130, 20],
+            iconAnchor: [0, 0],
+            className: '',
+          }),
+          interactive: false,
+        }).addTo(leafletMap);
+        labelMarkers[city.id] = label;
+      });
+
+      // ─── Legend rows (build once, update colour/size/value dynamically) ──────
+      const legendEl = document.getElementById('legend-rows');
+      const legData = CITIES.map(c => ({ ...c, el_dot: null, el_val: null, el_rank: null }));
+
+      legData.forEach((c, i) => {
+        const row = document.createElement('div');
+        row.className = 'leg-row';
+        row.innerHTML = `
+      <span class="leg-rank" id="lr-rank-${c.id}">#-</span>
+      <span class="leg-dot"  id="lr-dot-${c.id}"  style="width:12px;height:12px;background:#3fd1c8;display:inline-block;"></span>
+      <span class="leg-name">${c.name}</span>
+      <span class="leg-val"  id="lr-val-${c.id}" style="color:#3fd1c8;">-</span>
+    `;
+        legendEl.appendChild(row);
+      });
+
+      // ─── Core update function ─────────────────────────────────────────────────
+      function update(wH, wT, wA) {
+        // Normalise
+        const total = wH + wT + wA || 1;
+        wH /= total; wT /= total; wA /= total;
+
+        // Compute new GIPI for each city
+        const scored = CITIES.map(c => {
+          const gipi = wH * c.hydro + wT * c.heat + wA * c.aq;
+          return { ...c, gipi };
+        });
+
+        const vals = scored.map(c => c.gipi);
+        const gMin = Math.min(...vals);
+        const gMax = Math.max(...vals);
+        const range = gMax - gMin || 1;
+
+        // Sort for ranking
+        const sorted = [...scored].sort((a, b) => b.gipi - a.gipi);
+
+        // Update circles
+        scored.forEach(c => {
+          const norm = (c.gipi - gMin) / range;
+          const radius = scaleRadius(norm);
+          const color = gipiColor(norm);
+          const circle = layers[c.id];
+          circle.setRadius(radius);
+          circle.setStyle({ color, fillColor: color });
+
+          const tipHtml = `<div style="font-family:Inter,sans-serif;font-size:13px;padding:4px 8px;
+                         background:#1a1a2e;color:#eee;border-radius:6px;border:1px solid ${color};line-height:1.6;">
+        <b style="color:${color};font-size:15px;">${c.name}</b><br>
+        <span style="color:#aaa;">GIPI Index:</span>
+        <span style="color:#fff;font-weight:600;">${c.gipi.toFixed(4)}</span><br>
+        <span style="color:#555;font-size:10px;">Hydro: ${c.hydro.toFixed(3)} &nbsp;Heat: ${c.heat.toFixed(3)} &nbsp;AQ: ${c.aq.toFixed(3)}</span>
+      </div>`;
+          circle.setTooltipContent(tipHtml);
+          circle.setPopupContent(`<b>${c.name}</b><br>GIPI: ${c.gipi.toFixed(4)}`);
+        });
+
+        // Update legend (re-rank)
+        sorted.forEach((c, rank) => {
+          const norm = (c.gipi - gMin) / range;
+          const color = gipiColor(norm);
+          const dotSz = Math.max(10, Math.min(22, Math.round(scaleRadius(norm) * 0.52)));
+
+          const dotEl = document.getElementById(`lr-dot-${c.id}`);
+          const valEl = document.getElementById(`lr-val-${c.id}`);
+          const rankEl = document.getElementById(`lr-rank-${c.id}`);
+          const rowEl = dotEl && dotEl.closest('.leg-row');
+
+          if (dotEl) { dotEl.style.background = color; dotEl.style.width = dotSz + 'px'; dotEl.style.height = dotSz + 'px'; }
+          if (valEl) { valEl.style.color = color; valEl.textContent = c.gipi.toFixed(4); }
+          if (rankEl) { rankEl.textContent = '#' + (rank + 1); }
+
+          // Re-order row in legend DOM
+          if (rowEl) legendEl.appendChild(rowEl);
+        });
+      }
+
+      // ─── Slider logic ─────────────────────────────────────────────────────────
+      const slH = document.getElementById('sl-hydro');
+      const slT = document.getElementById('sl-heat');
+      const slA = document.getElementById('sl-aq');
+
+      const lblH = document.getElementById('lbl-hydro');
+      const lblT = document.getElementById('lbl-heat');
+      const lblA = document.getElementById('lbl-aq');
+
+      const sumBar = document.getElementById('sum-bar');
+      const sumVal = document.getElementById('sum-val');
+
+      function readWeights() {
+        return { h: +slH.value / 100, t: +slT.value / 100, a: +slA.value / 100 };
+      }
+
+      function applySliders() {
+        let { h, t, a } = readWeights();
+        const total = h + t + a;
+
+        lblH.textContent = h.toFixed(2);
+        lblT.textContent = t.toFixed(2);
+        lblA.textContent = a.toFixed(2);
+
+        // Sum indicator bar
+        const pct = Math.min(total, 1);
+        const ok = Math.abs(total - 1) < 0.005;
+        sumBar.style.background = ok
+          ? 'linear-gradient(to right,#3fd1c8,' + (pct * 100) + '%,#333 0)'
+          : 'linear-gradient(to right,#f7412d,' + (pct * 100) + '%,#333 0)';
+        sumVal.textContent = total.toFixed(2);
+        sumVal.style.color = ok ? '#3fd1c8' : '#f7412d';
+
+        update(h, t, a);
+      }
+
+      // Cascade-down logic:
+      //   Moving Hydro  → fills remainder into Heat first, then AQ absorbs the rest.
+      //   Moving Heat   → only AQ adjusts; Hydro is never touched.
+      //   Moving AQ     → AQ is set directly; Heat and Hydro are never touched.
+      //                   (sum bar turns red if they don't add to 1.00)
+      function enforceSum(movedId) {
+        let h = +slH.value, t = +slT.value, a = +slA.value;
+
+        if (movedId === 'h') {
+          // Hydro moved: cascade into Heat, then AQ absorbs the rest
+          const remain = Math.max(0, 100 - h);
+          // Keep Heat's current share in proportion relative to (t + a), but
+          // simpler UX: let Heat keep its value if it still fits, excess to AQ
+          t = Math.min(t, remain);
+          a = Math.max(0, remain - t);
+        } else if (movedId === 't') {
+          // Heat moved: only AQ adjusts, Hydro stays fixed
+          a = Math.max(0, 100 - h - t);
+        }
+        // movedId === 'a': AQ set directly, nothing above changes
+
+        slH.value = Math.max(0, Math.min(100, h));
+        slT.value = Math.max(0, Math.min(100, t));
+        slA.value = Math.max(0, Math.min(100, a));
+
+        applySliders();
+      }
+
+      slH.addEventListener('input', () => enforceSum('h'));
+      slT.addEventListener('input', () => enforceSum('t'));
+      slA.addEventListener('input', () => enforceSum('a'));
+
+      // ─── Buttons ──────────────────────────────────────────────────────────────
+      document.getElementById('btn-classic').addEventListener('click', () => {
+        slH.value = Math.round(BASE_W.hydro * 100);
+        slT.value = Math.round(BASE_W.heat * 100);
+        slA.value = Math.round(BASE_W.aq * 100);
+        applySliders();
+      });
+
+      document.getElementById('btn-equal').addEventListener('click', () => {
+        slH.value = 34; slT.value = 33; slA.value = 33;
+        applySliders();
+      });
+
+      // Component-solo buttons
+      document.getElementById('btn-hydro-only').addEventListener('click', () => {
+        slH.value = 100; slT.value = 0; slA.value = 0;
+        applySliders();
+      });
+
+      document.getElementById('btn-heat-only').addEventListener('click', () => {
+        slH.value = 0; slT.value = 100; slA.value = 0;
+        applySliders();
+      });
+
+      document.getElementById('btn-aq-only').addEventListener('click', () => {
+        slH.value = 0; slT.value = 0; slA.value = 100;
+        applySliders();
+      });
+
+      // ─── Initial render ───────────────────────────────────────────────────────
+      applySliders();
+
+    });
+  </script>
+
+  <div class="folium-map" id="map_63dce5f1cec547c47feb65d0694faa86"></div>
+
+</body>
+<script>
+
+
+  var map_63dce5f1cec547c47feb65d0694faa86 = L.map(
+    "map_63dce5f1cec547c47feb65d0694faa86",
+    {
+      center: [38.5, -96.5],
+      crs: L.CRS.EPSG3857,
+      ...{
+        "zoom": 4,
+        "zoomControl": true,
+        "preferCanvas": false,
+      }
+
+    }
+  );
+  L.control.scale().addTo(map_63dce5f1cec547c47feb65d0694faa86);
+
+
+
+
+
+  var tile_layer_91eb3ef5412b83ff04d61e1a09d30331 = L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+    {
+      "minZoom": 0,
+      "maxZoom": 20,
+      "maxNativeZoom": 20,
+      "noWrap": false,
+      "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+      "subdomains": "abcd",
+      "detectRetina": false,
+      "tms": false,
+      "opacity": 1,
+    }
+
+  );
+
+
+  tile_layer_91eb3ef5412b83ff04d61e1a09d30331.addTo(map_63dce5f1cec547c47feb65d0694faa86);
+
+</script>
+
+</html>
