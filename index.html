@@ -578,6 +578,7 @@
       flex-shrink: 0;
       line-height: 1;
     }
+
     #ctrl-info-btn:hover {
       background: rgba(63, 209, 200, 0.22);
       transform: scale(1.1);
@@ -597,13 +598,23 @@
       color: #9ab8c8;
       animation: tipFadeIn 0.18s ease;
     }
+
     @keyframes tipFadeIn {
-      from { opacity: 0; transform: translateY(-4px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     #ctrl-info-tip strong {
       color: #3fd1c8;
     }
+
     #ctrl-info-tip em {
       color: #b0cad8;
     }
@@ -684,13 +695,16 @@
         The <strong>Green Infrastructure Potential Index (GIPI)</strong> is a geospatial composite index
         developed for Nate Mestre&rsquo;s 2026 master&rsquo;s thesis at NYU. It uses
         <strong>multi-criteria decision analysis</strong> to integrate high-resolution data on
-        flooding risk, extreme heat, and air pollution, ranking urban areas by their need for
-        environmentally sustainable &ldquo;blue and green&rdquo; infrastructure (bioswales, green roofs, urban
+        flooding risk, extreme heat, and air pollution, ranking urban areas by their potential for introducing
+        environmentally sustainable blue and green infrastructure (BGI; bioswales, green roofs, urban
         tree canopy, permeable pavement, etc.).
-        The standardized composite score enables both <strong>intra-city targeting</strong>
-        (finding the best sites within a city) and <strong>inter-city comparison</strong>
-        (benchmarking municipalities against one another), helping planners move beyond
-        outdated gray infrastructure toward more resilient, sustainable urban environments.
+        This interactive map only reflects <strong>city-wide GIPI averages and inter-city comparison</strong>
+        (benchmarking municipalities against one another) product of the thesis. The other product of the thesis,
+        <strong> intra-city GIPI mapping </strong>, that is,
+        mapping where BGI should best be implemented <i>within</i> a city, is not included in this map.
+        Ultimately, the project aims at assessing where US cities lie in their potential for BGI introduction,helping
+        planners move beyond
+        outdated gray infrastructure toward more resilient, sustainable urban environments adapted for a changing world
       </div>
     </div>
 
@@ -743,9 +757,10 @@
     <div class="info-section">
       <h5>Air Quality Component (AQ)</h5>
       <div class="info-body">
-        The Air Quality component is included as a <strong>raw, unweighted dataset</strong> (no internal
-        sub-component aggregation). It captures ambient air pollution exposure levels across
-        the city and enters the final GIPI equation directly.
+        The Air Quality component is included as a <strong>raw dataset</strong> (no internal
+        sub-component aggregation). It comes from a CDC environmental justice dataset and is a percentile rank
+        consisting of ozone exposure, PM2.5 exposure, air toxics cancer risk, and diesel particulate matter exposure and
+        enters the final GIPI equation directly.
       </div>
     </div>
 
